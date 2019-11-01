@@ -1,0 +1,11 @@
+{
+    "name": "xemlock/wp-people-manager",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "xemlock",
+            "email": "xemlock@gmail.com"
+        }
+    ],
+    "require": {}
+}
