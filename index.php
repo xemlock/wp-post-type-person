@@ -10,6 +10,9 @@
  */
 $POST_TYPE = 'person';
 
+require __DIR__ . '/admin_image_field.php';
+require __DIR__ . '/person_select_field.php';
+
 add_action('init', function () use ($POST_TYPE) {
     $TEXT_DOMAIN = __FILE__;
 
@@ -44,9 +47,9 @@ add_action('init', function () use ($POST_TYPE) {
         'show_ui'              => true,
         'public' => true,
         'rewrite' => false,
-        'rewrite' => array(
-            'slug' => 'people',
-        ),
+//        'rewrite' => array(
+//            'slug' => 'people',
+//        ),
 
         // 'capability_type' => $POST_TYPE,
         // 'map_meta_cap' => true, // use built-in map_meta_cap impl
@@ -210,13 +213,20 @@ $y = function (WP_Post $post) use ($POST_TYPE) {
 add_action('edit_form_after_editor', $y);
 
 add_action( 'add_meta_boxes', function () use ($POST_TYPE) {
-    require __DIR__ . '/admin_image_field.php';
-
     add_meta_box('photo', __('Photo'), function (WP_Post $post) {
         admin_image_field(array(
             'name' => 'person__photo',
             // 'value' => get_post_meta($post->ID, 'person__photo', true),
             'value' => get_post_thumbnail_id($post->ID),
+        ));
+    }, $POST_TYPE, 'side', 'default', 2);
+
+    add_meta_box('lecture_speaker', __('Lecture speaker'), function (WP_Post $post) {
+        person_select_field(array(
+            'name'     => 'lecture_speaker',
+            'multiple' => true,
+            'sortable' => true,
+            'value'    => get_post_meta($post->ID, 'lecture_speaker', true),
         ));
     }, $POST_TYPE, 'side', 'default', 2);
 

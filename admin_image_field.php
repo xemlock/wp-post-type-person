@@ -116,13 +116,19 @@ jQuery(function ($) {
 function get_admin_image_field(array $field)
 {
     $name = $field['name'];
+    $class = isset($field['class']) ? $field['class'] : '';
 
-    $id = isset($field['id']) ? $field['id'] : ('image-field-' . substr(sprintf('%.8f', mt_rand()), 2));
+    $id = isset($field['id']) ? $field['id'] : '';
     $value = isset($field['value']) ? $field['value'] : '';
 
     $img = $value ? wp_get_attachment_image_src($value, 'full') : null;
 
-    $html = '<div id="' . esc_attr($id) . '" data-image-field' . ($img ? ' data-has-image' : '') . '>';
+    $html = '<div'
+        . ($id ? ' id="' . esc_attr($id) . '"' : '')
+        . ($class ? ' class="' . esc_attr($class) . '"' : '')
+        . ' data-image-field'
+        . ($img ? ' data-has-image' : '')
+        . '>';
     $html .= '<img src="' . ($img ? esc_attr($img[0]) : '') . '" alt="'. esc_html__('Image preview') .'" />';
 
     $html .= '<a href="#!" role="button" data-action="set-image">' . esc_html__('Select image') . '</a>';
