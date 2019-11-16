@@ -16,7 +16,7 @@ require __DIR__ . '/person_select_field.php';
 add_action('init', function () use ($POST_TYPE) {
     $TEXT_DOMAIN = __FILE__;
 
-    register_post_type($POST_TYPE, $pt = array(
+    $pt = array(
         'labels' => array(
             'name'          => __('People', $TEXT_DOMAIN),
             'singular_name' => __('Person', $TEXT_DOMAIN),
@@ -70,13 +70,34 @@ add_action('init', function () use ($POST_TYPE) {
 //            'read_post'              => 'read_' . $POST_TYPE,
 //        ),
         'taxonomies' => array(
-            // 'person_category',
+            $POST_TYPE . '_category',
             // 'question_tag',
         ),
-    ));
+    );
 //    foreach (get_post_type_object($POST_TYPE)->cap as $cap) {
 //        get_role('administrator')->add_cap($cap);
 //    }
+
+    $pt = apply_filters('register_post_type_' . $POST_TYPE . '_args', $pt);
+    register_post_type($POST_TYPE, $pt);
+
+    $rt = array(
+        'public'            => true,
+        'hierarchical'      => true, // categories are hierarchical
+        'label'             => __('Categories'),
+        'singular_label'    => __('Category'),
+        'show_admin_column' => true,
+        'rewrite'           => false,
+//        'capabilities' => array(
+//            'manage_terms' => 'manage_categories',
+//            'edit_terms'   => 'manage_categories',
+//            'delete_terms' => 'manage_categories',
+//            'assign_terms' => 'edit_' . self::POST_TYPE . 's',
+//        ),
+    );
+
+    $rt = apply_filters('register_taxonomy_' . $POST_TYPE . '_category_args', $rt);
+    register_taxonomy($POST_TYPE . '_category', $POST_TYPE, $rt);
 });
 
 
@@ -165,10 +186,14 @@ $y = function (WP_Post $post) use ($POST_TYPE) {
 ?>
     <style>
         /* Hide 'Show preview' button */
-        #preview-action {
+        /* When editing post hide block with preview button */
+        body.post-php #minor-publishing-actions {
             display: none;
         }
-
+        /* When creating post hide button only, because there is a 'Save draft' button there */
+        body.post-new-php #post-preview {
+            display: none;
+        }
 
         .person__contact {
             margin: 20px 0;

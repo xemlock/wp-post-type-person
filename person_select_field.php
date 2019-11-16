@@ -73,6 +73,12 @@ function person_select_field(array $field)
     } else {
         $people = array();
     }
+
+    $settings = array(
+        'multiple' => $multiple,
+        'sortable' => $sortable,
+
+    )
 ?>
 <div class="person-select" id="<?php esc_attr_e($id) ?>">
     <div class="person-select__value-inputs">
@@ -189,17 +195,11 @@ jQuery(function ($) {
         }
     });
 
-    searchInput.on('click', function (e) {
-
-    });
-
     autocomplete._renderItem = function (ul, item) {
         return $('<li>')
             .append('<div>' + item.full_name + '<br><img src="' + (item.thumbnail_url || '') + '" alt="" /></div>')
             .appendTo(ul);
     };
-
-
 });
 </script>
 <?php
