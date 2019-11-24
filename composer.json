@@ -1,5 +1,6 @@
 {
-    "name": "xemlock/wp-people-manager",
+    "name": "xemlock/wp-post-type-person",
+    "description": "Person post type for WordPress",
     "license": "MIT",
     "authors": [
         {

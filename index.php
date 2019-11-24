@@ -1,10 +1,10 @@
 <?php
 
 /*
- * Plugin Name: WP People Manager
- * Plugin URI:  https://github.com/xemlock/wp-people-manager
- * Description:
- * Version:     0.1.0
+ * Plugin Name: WP Post Type: Person
+ * Plugin URI:  https://github.com/xemlock/wp-post-type-person
+ * Description: Plugin providing person post type
+ * Version:     0.1.0-dev
  * Author:      xemlock
  * Author URI:  https://github.com/xemlock
  */
@@ -281,7 +281,7 @@ add_action( 'add_meta_boxes', function () use ($POST_TYPE) {
 });
 
 add_filter('wp_insert_post_data', function (array $data, array $post_data) use ($POST_TYPE) {
-    if ($data['post_type'] !== $POST_TYPE || empty($post_data['post_ID'])) {
+    if (empty($data['post_type']) || empty($post_data['post_ID']) || $data['post_type'] !== $POST_TYPE) {
         return $data;
     }
 
@@ -314,7 +314,7 @@ add_filter('wp_insert_post_data', function (array $data, array $post_data) use (
     }
 
     return $data;
-} , '99', 2);
+} , 99, 2);
 
 
 
@@ -322,4 +322,4 @@ add_action("save_post_{$POST_TYPE}", function ($post_id, WP_Post $post) {
     if (empty($_POST['post_edit_form_submit'])) {
         return;
     }
-}, 10, 3);
+}, 10, 2);
