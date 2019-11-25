@@ -313,6 +313,8 @@ add_filter('wp_insert_post_data', function (array $data, array $post_data) use (
         $data['post_title'] = '(unnamed)';
     }
 
+    $data['post_name'] = sanitize_title($data['post_title']);
+
     return $data;
 } , 99, 2);
 
