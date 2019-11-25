@@ -107,9 +107,9 @@ $x = function (WP_Post $post) use ($POST_TYPE) {
         return;
     }
 
-    $first_name = get_post_meta($post->ID,'person__first_name', true);
-    $last_name = get_post_meta($post->ID,'person__last_name', true);
-    $position = get_post_meta($post->ID,'person__position', true);
+    $first_name = get_post_meta($post->ID,'person_first_name', true);
+    $last_name = get_post_meta($post->ID,'person_last_name', true);
+    $position = get_post_meta($post->ID,'person_position', true);
 ?>
     <style>
         /* hide 'See updated post' */
@@ -141,13 +141,13 @@ $x = function (WP_Post $post) use ($POST_TYPE) {
             flex: 0 0 50%;
         }
 
-        .person__position {
+        .person_position {
             margin-bottom: 10px;
         }
-        .person__position label {
+        .person_position label {
             display: block;
         }
-        .person__position input {
+        .person_position input {
             box-sizing: border-box;
             margin: 0;
             padding: 10px 20px;
@@ -156,13 +156,13 @@ $x = function (WP_Post $post) use ($POST_TYPE) {
         }
     </style>
     <div class="person__name">
-        <label for="person__first_name">Name:</label>
-        <input type="text" name="person__first_name" placeholder="First name" id="person__first_name" value="<?php echo esc_attr($first_name) ?>" />
-        <input type="text" name="person__last_name" placeholder="Last name" id="person__last_name" value="<?php echo esc_attr($last_name) ?>" />
+        <label for="person_first_name">Name:</label>
+        <input type="text" name="person_first_name" placeholder="First name" id="person_first_name" value="<?php echo esc_attr($first_name) ?>" />
+        <input type="text" name="person_last_name" placeholder="Last name" id="person_last_name" value="<?php echo esc_attr($last_name) ?>" />
     </div>
-    <div class="person__position">
-        <label for="person__position">Position:</label>
-        <input type="text" name="person__position" placeholder="Position" id="person__position"  value="<?php echo esc_attr($position) ?>" />
+    <div class="person_position">
+        <label for="person_position">Position:</label>
+        <input type="text" name="person_position" placeholder="Position" id="person_position"  value="<?php echo esc_attr($position) ?>" />
     </div>
     <input type="hidden" name="post_edit_form_submit" value="1" />
 <?php
@@ -287,17 +287,22 @@ add_filter('wp_insert_post_data', function (array $data, array $post_data) use (
 
     $post_id = $post_data['post_ID'];
 
-    $first_name = trim($post_data['person__first_name']);
-    $last_name = trim($post_data['person__last_name']);
-    $position = trim($post_data['person__position']);
+    $first_name = trim($post_data['person_first_name']);
+    $last_name = trim($post_data['person_last_name']);
+    $position = trim($post_data['person_position']);
 
-    update_post_meta($post_id, 'person__first_name', $first_name);
-    update_post_meta($post_id, 'person__last_name', $last_name);
-    update_post_meta($post_id, 'person__position', $position);
+    update_post_meta($post_id, 'person_first_name', $first_name);
+    update_post_meta($post_id, 'person_last_name', $last_name);
+    update_post_meta($post_id, 'person_position', $position);
 
     $person_photo = (int) $post_data['person__photo'];
     // update_post_meta($post_id, 'person__photo', $person_photo);
     set_post_thumbnail($post_id, $person_photo);
+
+    update_post_meta($post_id, 'person_www', trim($post_data['person__contact_info']['www']));
+    update_post_meta($post_id, 'person_email', trim($post_data['person__contact_info']['email']));
+    update_post_meta($post_id, 'person_phone', trim($post_data['person__contact_info']['phone']));
+    update_post_meta($post_id, 'person_address', trim($post_data['person__contact_info']['address']));
 
     $person_contact_info = array();
     foreach (array('www', 'email', 'phone', 'address') as $type) {
@@ -307,7 +312,11 @@ add_filter('wp_insert_post_data', function (array $data, array $post_data) use (
 
     update_post_meta($post_id, 'person__contact_info', $person_contact_info);
 
-    $data['post_title'] = join(' ', array_filter(compact('first_name', 'last_name'), 'strlen'));
+    $title = join(' ', array_filter(compact('first_name', 'last_name'), 'strlen'));
+
+    if (strlen($title)) {
+        $data['post_title'] = $title;
+    }
 
     if (empty($data['post_title'])) {
         $data['post_title'] = '(unnamed)';
