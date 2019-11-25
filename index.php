@@ -3,7 +3,7 @@
 /*
  * Plugin Name: WP Post Type: Person
  * Plugin URI:  https://github.com/xemlock/wp-post-type-person
- * Description: Plugin providing person post type
+ * Description: Person post type
  * Version:     0.1.0-dev
  * Author:      xemlock
  * Author URI:  https://github.com/xemlock
@@ -316,10 +316,39 @@ add_filter('wp_insert_post_data', function (array $data, array $post_data) use (
     return $data;
 } , 99, 2);
 
-
-
 add_action("save_post_{$POST_TYPE}", function ($post_id, WP_Post $post) {
     if (empty($_POST['post_edit_form_submit'])) {
         return;
     }
 }, 10, 2);
+
+add_filter('admin_head', function () {
+?>
+<style>
+.post-type-person .wp-list-table .column-person_thumbnail {
+    width: 60px;
+}
+</style>
+<?php
+});
+
+add_filter('manage_person_posts_columns', function (array $columns) {
+    return array_slice($columns, 0, 1)
+        + array('person_thumbnail' => __('Photo'))
+        + array_slice($columns, 1);
+}, 10, 1);
+
+add_action('manage_person_posts_custom_column', function ($column, $post_id) {
+    if ($column === 'person_thumbnail') {
+        if (function_exists('get_the_post_thumbnail_url')) { // since 4.4.0
+            $post_thumbnail = get_the_post_thumbnail_url((int) $post_id, 'post-thumbnail');
+        } else {
+            $img = wp_get_attachment_image_src((int) $post_id, 'post-thumbnail');
+            $post_thumbnail = $img ? $img[0] : false;
+        }
+
+        if ($post_thumbnail) {
+            echo '<img src="' . $post_thumbnail . '" style="width:48px;height:48px;" />';
+        }
+    }
+}, 100, 2);
