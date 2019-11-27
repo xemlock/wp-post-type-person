@@ -226,7 +226,7 @@ $y = function (WP_Post $post) use ($POST_TYPE) {
             <?php foreach ($entries as $entry => $label): ?>
                 <li>
                     <div><?php echo esc_html($label) ?></div>
-                    <div><input type="text" name="person__contact_info[<?php echo $entry ?>]" value="<?php echo @$values[$entry] ?>" /></div>
+                    <div><input type="text" name="person__contact_info[<?php echo $entry ?>]" value="<?php esc_attr_e(@$values[$entry]) ?>" /></div>
                 </li>
             <?php endforeach ?>
             </ul>
