@@ -117,6 +117,12 @@ $x = function (WP_Post $post) use ($POST_TYPE) {
             display: none;
         }
 
+        .person-field input.person-input {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 6px 12px;
+            font-size: 16px;
+        }
 
         .person__name {
             display: flex;
@@ -130,9 +136,6 @@ $x = function (WP_Post $post) use ($POST_TYPE) {
         .person__name input {
             position: relative;
             flex: 0 0 50%;
-            box-sizing: border-box;
-            margin: 0;
-            padding: 10px 20px;
         }
         .person__name input:focus {
             z-index: 1;
@@ -140,29 +143,35 @@ $x = function (WP_Post $post) use ($POST_TYPE) {
         .person__name input + input {
             flex: 0 0 50%;
         }
-
+        .person__name .person-input.input-first-name {
+            border-top-right-radius: 0;
+            border-bottom-right-radius: 0;
+        }
+        .person__name .person-input.input-last-name {
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+            margin-left: -1px;
+            flex-basis: calc(50% + 1px);
+        }
         .person_position {
             margin-bottom: 10px;
         }
         .person_position label {
             display: block;
         }
-        .person_position input {
-            box-sizing: border-box;
-            margin: 0;
-            padding: 10px 20px;
+        .person_position .person-input {
             display: block;
             width: 100%;
         }
     </style>
-    <div class="person__name">
+    <div class="person-field person__name">
         <label for="person_first_name">Name:</label>
-        <input type="text" name="person_first_name" placeholder="First name" id="person_first_name" value="<?php echo esc_attr($first_name) ?>" />
-        <input type="text" name="person_last_name" placeholder="Last name" id="person_last_name" value="<?php echo esc_attr($last_name) ?>" />
+        <input type="text" class="person-input input-first-name" name="person_first_name" placeholder="First name" id="person_first_name" value="<?php echo esc_attr($first_name) ?>" />
+        <input type="text" class="person-input input-last-name" name="person_last_name" placeholder="Last name" id="person_last_name" value="<?php echo esc_attr($last_name) ?>" />
     </div>
-    <div class="person_position">
+    <div class="person-field person_position">
         <label for="person_position">Position:</label>
-        <input type="text" name="person_position" placeholder="Position" id="person_position"  value="<?php echo esc_attr($position) ?>" />
+        <input type="text" class="person-input" name="person_position" placeholder="Position" id="person_position" value="<?php echo esc_attr($position) ?>" />
     </div>
     <input type="hidden" name="post_edit_form_submit" value="1" />
 <?php
@@ -354,7 +363,8 @@ add_action('manage_person_posts_custom_column', function ($column, $post_id) {
         if (function_exists('get_the_post_thumbnail_url')) { // since 4.4.0
             $post_thumbnail = get_the_post_thumbnail_url((int) $post_id, 'post-thumbnail');
         } else {
-            $img = wp_get_attachment_image_src((int) $post_id, 'post-thumbnail');
+            $attachment_id = get_post_thumbnail_id((int) $post_id);
+            $img = wp_get_attachment_image_src((int) $attachment_id, 'post-thumbnail');
             $post_thumbnail = $img ? $img[0] : false;
         }
 
