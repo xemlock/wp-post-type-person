@@ -41,7 +41,7 @@ add_action('init', function () use ($POST_TYPE) {
             'revisions',
         ),
         'hierarchical'         => false,
-        'menu_position'        => 5,
+        'menu_position'        => 20,
         'show_in_admin_bar'    => true,
         'show_in_nav_menus'    => true,
         'show_ui'              => true,
