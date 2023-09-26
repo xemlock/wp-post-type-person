@@ -192,6 +192,9 @@ $y = function (WP_Post $post) use ($POST_TYPE) {
     ];
 
     $values = get_post_meta($post->ID, 'person__contact_info', true);
+    if (!is_array($values)) {
+        $values = array();
+    }
 ?>
     <style>
         /* Hide 'Show preview' button */
